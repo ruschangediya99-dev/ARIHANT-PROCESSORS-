@@ -1,0 +1,1283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ARIHANT PROCESSORS - Lot Tracker</title>
+    <style>
+        /* --- CSS STYLES --- */
+        body {
+            font-family: sans-serif;
+            margin: 0;
+            padding: 20px;
+            color: #333;
+            
+            /* --- FABRIC BACKGROUND --- */
+            background-color: #f4f7f6; /* Fallback color */
+            background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAB0SURBVHgB7dExDoAwDERR//9pdBf8R0fRBAf1LhLg7Jg4SjKZJd9r+34n4Vp8d3Gv41xU78C1i+JbWf9xXf4/G/9R/Xw2/w3rG/41vHfoWr4Ff3X8Wv/Bfofb8L3D/47+n3dJ9P90z/h/sO/h/r+g/gXz0B/wB2eU3n9YI2n8AAAAASUVORK5CYII=');
+            background-repeat: repeat;
+            /* ----------------------------- */
+        }
+        .container {
+            max-width: 650px;
+            margin: 40px auto;
+            padding: 30px;
+            background-color: #ffffff; /* Container remains white for readability */
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); 
+        }
+        h1 {
+            color: #007bff;
+            text-align: center;
+            margin-bottom: 25px;
+        }
+        h2 {
+            border-bottom: 2px solid #ddd;
+            padding-bottom: 5px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+        input[type="text"], input[type="date"], input[type="number"], select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box; 
+        }
+        /* Style for the collapsible section button */
+        .collapsible-header {
+            background-color: #f8f9fa;
+            color: #495057;
+            padding: 12px;
+            border: 1px solid #dee2e6;
+            cursor: pointer;
+            width: 100%;
+            text-align: left;
+            font-weight: bold;
+            margin-top: 15px;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+        }
+        .collapsible-header:hover {
+            background-color: #e2e6ea;
+        }
+        .collapsible-content {
+            padding: 15px;
+            border: 1px solid #dee2e6;
+            border-top: none;
+            display: none; /* Hidden by default */
+            background-color: #ffffff;
+            border-radius: 0 0 4px 4px;
+            margin-bottom: 15px; 
+        }
+        /* Primary (Log/Save) Button styles */
+        .primary-btn {
+            width: 100%;
+            padding: 12px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 10px;
+            transition: background-color 0.3s;
+        }
+        .primary-btn:hover {
+            background-color: #218838;
+        }
+        /* EDIT BUTTON specific styling */
+        .edit-btn {
+            padding: 5px 10px;
+            background-color: #ffc107; /* Yellow */
+            color: #333;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            margin-left: 10px;
+            white-space: nowrap; 
+            float: right;
+        }
+        .edit-btn:hover {
+            background-color: #e0a800;
+        }
+        
+        /* Checkbox specific styling */
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+            padding: 10px;
+            border: 1px solid #eee;
+            border-radius: 4px;
+        }
+        .checkbox-group label {
+            margin-bottom: 0;
+            display: inline-block;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+        .checkbox-group input[type="checkbox"] {
+            width: auto;
+            padding: 0;
+            margin: 0;
+            transform: scale(1.5);
+        }
+        /* Status Advance Button */
+        .status-btn {
+            padding: 8px 15px;
+            background-color: #007bff; /* Blue */
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            margin-top: 10px;
+            float: right; 
+        }
+        
+        /* Grey Check Action Button in Tab 2 */
+        .check-action-btn {
+            padding: 5px 10px;
+            background-color: #28a745; /* Green for Confirmation */
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            margin-left: 10px;
+            white-space: nowrap; 
+        }
+        .check-action-btn:hover {
+            background-color: #218838;
+        }
+        
+        /* Pending Confirmation List Styling (Tab 2) */
+        #pendingCheckListContainer {
+            margin-top: 10px;
+            padding: 15px;
+            border: 1px solid #007bff; 
+            background-color: #e3f3ff;
+            border-radius: 4px;
+        }
+        #pendingCheckListContainer h3 {
+            color: #007bff;
+            margin-top: 0;
+            font-size: 1.1em;
+            border-bottom: 1px solid #007bff;
+            padding-bottom: 5px;
+            margin-bottom: 10px;
+        }
+        #pendingCheckList {
+            max-height: 250px; 
+            overflow-y: auto; 
+            padding-right: 10px;
+            padding-bottom: 5px;
+        }
+        .pending-item-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.9em;
+            color: #333;
+            padding: 10px;
+            margin-bottom: 5px;
+            background-color: #ffffff; 
+            border-left: 4px solid #007bff; 
+            border-radius: 3px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        }
+        
+        /* Filter groups specifically for Tab 2 */
+        .pending-filter-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        .pending-filter-group > div {
+            flex: 1;
+        }
+        .pending-filter-group label {
+            font-weight: normal;
+            font-size: 0.9em;
+        }
+        .pending-filter-group input, .pending-filter-group select {
+            padding: 8px;
+            font-size: 0.9em;
+        }
+
+        /* Standard Lot List Styles */
+        #lotList {
+            margin-top: 30px;
+            border-top: 1px solid #eee;
+            padding-top: 20px;
+        }
+        #lotList ul {
+            list-style: none;
+            padding: 0;
+        }
+        #lotList li {
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 4px;
+            line-height: 1.6;
+            overflow: auto; 
+            border-left: 5px solid; 
+        }
+        /* Status Badge Styling and Color Coding */
+        .status-badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.8em;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+        .received { background-color: #e3f3ff; border-left-color: #007bff; }
+        .status-received { background-color: #007bff; color: white; }
+        .in-dyeing { background-color: #fff8e1; border-left-color: #ffc107; }
+        .status-in-dyeing { background-color: #ffc107; color: #333; }
+        .qc-finishing { background-color: #e6ffed; border-left-color: #28a745; }
+        .status-qc-finishing { background-color: #28a745; color: white; }
+        .complete-dispatched { background-color: #e0e0e0; border-left-color: #6c757d; }
+        .status-complete-dispatched { background-color: #6c757d; color: white; }
+        
+        /* New styles for the Report section (Applies to both Tab 2 and Tab 3 report areas) */
+        .report-results-container {
+            margin-top: 15px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            min-height: 100px;
+            max-height: 300px;
+            overflow-y: auto;
+            background-color: #f9f9f9;
+        }
+        .report-item {
+            padding: 8px;
+            border-bottom: 1px dashed #eee;
+            font-size: 0.9em;
+        }
+        .report-item:last-child {
+            border-bottom: none;
+        }
+        .report-summary {
+            font-weight: bold;
+            padding: 5px 0;
+            color: #007bff;
+        }
+        /* Report Filter Grid */
+        .filter-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr); /* Three columns for inputs */
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        .filter-grid .form-group {
+            margin-bottom: 0;
+        }
+        /* Export/Button Row */
+        .export-buttons-row {
+             grid-column: 1 / -1; 
+             display: flex;
+             justify-content: flex-end;
+             gap: 10px; /* Space between buttons */
+        }
+        .export-buttons-row button {
+            width: 150px;
+            padding: 10px;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        /* Specific button colors */
+        .btn-generate {
+            background-color: #17a2b8; /* Teal */
+        }
+        .btn-generate:hover {
+            background-color: #138496;
+        }
+        .btn-print {
+            background-color: #6c757d; /* Grey */
+        }
+        .btn-print:hover {
+            background-color: #5a6268;
+        }
+        .btn-excel {
+            background-color: #28a745; /* Green */
+        }
+        .btn-excel:hover {
+            background-color: #218838;
+        }
+
+        /* --- NEW PRINT TABLE STYLES --- */
+        #printReportTable, #printPendingTable {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+        #printReportTable th, #printReportTable td, #printPendingTable th, #printPendingTable td {
+            border: 1px solid #ccc;
+            padding: 8px 12px;
+            text-align: left;
+            font-size: 0.9em;
+        }
+        #printReportTable th, #printPendingTable th {
+            background-color: #f2f2f2;
+            font-weight: bold;
+            color: #333;
+        }
+        #printReportTable tfoot td, #printPendingTable tfoot td {
+            font-weight: bold;
+            background-color: #e0e0e0;
+            border-top: 2px solid #333;
+        }
+        #printReportTable caption, #printPendingTable caption {
+            font-size: 1.2em;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #007bff;
+            text-align: left;
+        }
+        /* ------------------------------- */
+
+
+        /* Print media query to hide unnecessary elements for PDF/paper print */
+        @media print {
+            .collapsible-header, .form-group, .export-buttons-row, #lotList, .container h1, h2, hr, #checkerReportResults, #pendingReportResults {
+                display: none !important; /* Hide ALL UI elements */
+            }
+            .container {
+                box-shadow: none;
+                max-width: none;
+                margin: 0;
+                padding: 0;
+            }
+            #greyCheckingContent, #checkerReportContent {
+                display: block !important; /* Allow both sections to be printable containers */
+                border: none;
+                padding: 0;
+            }
+            /* ONLY SHOW THE HIDDEN PRINT TABLES */
+            #printContainer, #pendingPrintContainer {
+                display: block !important; 
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>ARIHANT PROCESSORS - Lot Tracker</h1>
+        
+        <h2>Lot Entry</h2>
+        
+        <button type="button" class="collapsible-header" onclick="toggleSection('greyInwardContent')">
+            1. Grey Inward Details (Click to Expand/Edit)
+        </button>
+
+        <div class="collapsible-content" id="greyInwardContent">
+            
+            <input type="hidden" id="editingLotNo" value="">
+
+            <div class="form-group">
+                <label for="lotNumber">Lot No. (Unique ID):</label>
+                <input type="text" id="lotNumber" placeholder="e.g., AP-2025-001" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="partyName">Name of Party:</label>
+                <input type="text" id="partyName" placeholder="Enter Customer Name" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="greyInwardDate">Grey Inward Date:</label>
+                <input type="date" id="greyInwardDate" required>
+            </div>
+
+            <div class="form-group">
+                <label for="fabricType">Type of Fabric:</label>
+                <select id="fabricType" required>
+                    <option value="">-- Select Type --</option>
+                    <option value="COTTON">COTTON</option>
+                    <option value="PCXPC">PCXPC</option>
+                    <option value="PCXPSF">PCXPSF</option>
+                    <option value="POLYSTER">POLYSTER</option>
+                    <option value="DINEAR">DINEAR</option>
+                    <option value="ROTO">ROTO</option>
+                    <option value="OTHERS">OTHERS</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="greyMetres">Metres (Mtrs):</label>
+                <input type="number" id="greyMetres" placeholder="Enter Grey Metres" step="1" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="jodiPairs">Jodi Pairs:</label>
+                <input type="number" id="jodiPairs" placeholder="Enter number of Jodi Pairs" step="1" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="tagga">Tagga (Total Rolls/Pieces):</label>
+                <input type="number" id="tagga" placeholder="Enter total number of rolls/pieces" step="1" required>
+            </div>
+
+            <div class="form-group">
+                <label for="greyQuality">Quality:</label>
+                <input type="text" id="greyQuality" placeholder="e.g., Poplin 40s" required>
+            </div>
+
+            <div class="form-group">
+                <label for="greyPanna">Panna (Inches):</label>
+                <input type="number" id="greyPanna" placeholder="Enter Panna/Width" step="0.5" required>
+            </div>
+
+            <div class="checkbox-group">
+                <input type="checkbox" id="okToProcessFlag">
+                <label for="okToProcessFlag">Initial **OK to Process** Decision (Tells Grey Checking to proceed)</label>
+            </div>
+
+            <button onclick="handleLotSubmission()" class="primary-btn" id="lotSubmitBtn">Log Lot Details</button>
+        </div>
+        <button type="button" class="collapsible-header" onclick="toggleSection('greyCheckingContent')">
+            2. Grey Checking Status (Click to Expand)
+        </button>
+
+        <div class="collapsible-content" id="greyCheckingContent">
+             <div class="form-group">
+                <label for="checkerNameSelect">Grey Checker Name:</label>
+                <select id="checkerNameSelect" required>
+                    <option value="">-- Select Checker --</option>
+                    <option value="Sukumar Patil">Sukumar Patil</option>
+                    <option value="Other">Other</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="greyCheckingDate">Set Confirmation Date (Required for action):</label>
+                <input type="date" id="greyCheckingDate" required>
+            </div>
+            
+             <div id="pendingCheckListContainer">
+                <h3>➡️ CONFIRM GREY CHECKED (Pending Confirmation)</h3>
+                
+                <div class="pending-filter-group">
+                    <div>
+                        <label for="pendingSearch">Search Lot/Party:</label>
+                        <input type="text" id="pendingSearch" placeholder="Lot No. or Party Name" onkeyup="filterPendingList()">
+                    </div>
+                    <div>
+                        <label for="pendingFabricType">Filter by Fabric:</label>
+                        <select id="pendingFabricType" onchange="filterPendingList()">
+                            <option value="All">All Fabric Types</option>
+                            <option value="COTTON">COTTON</option>
+                            <option value="PCXPC">PCXPC</option>
+                            <option value="PCXPSF">PCXPSF</option>
+                            <option value="POLYSTER">POLYSTER</option>
+                            <option value="DINEAR">DINEAR</option>
+                            <option value="ROTO">ROTO</option>
+                            <option value="OTHERS">OTHERS</option>
+                        </select>
+                    </div>
+                </div>
+                <div id="pendingCheckList">
+                    <p style="text-align: center; color: #6c757d; padding: 10px 0;">No lots currently pending check confirmation.</p>
+                </div>
+            </div>
+            <hr style="margin: 30px 0; border-top: 1px solid #ddd;">
+            
+            <h2>Pending List Report</h2>
+            <p>Generate a report of all lots currently awaiting Grey Check Confirmation.</p>
+            
+            <div class="export-buttons-row" style="justify-content: flex-start;">
+                <button class="btn-generate" style="width: 180px;" onclick="generatePendingReport()">Generate Pending Report</button>
+                <button class="btn-print" onclick="printPendingReport()">🖨️ Print Pending List</button>
+                <button class="btn-excel" onclick="exportPendingToCSV()">📊 Export Pending to Excel</button>
+            </div>
+
+            <div class="report-results-container">
+                <div id="pendingReportResults">
+                    <p style="text-align: center; color: #6c757d;">Click 'Generate Pending Report' to view lot data for export.</p>
+                </div>
+            </div>
+            
+            <div id="pendingPrintContainer" style="display: none;">
+                </div>
+            
+        </div>
+        <button type="button" class="collapsible-header" onclick="toggleSection('checkerReportContent')">
+            3. Checker Report & Data Filter (Click to Expand)
+        </button>
+
+        <div class="collapsible-content" id="checkerReportContent">
+            <h2>Checker Info Report</h2>
+            
+            <div class="filter-grid">
+                <div class="form-group">
+                    <label for="reportCheckerSelect">Select Checker:</label>
+                    <select id="reportCheckerSelect" required>
+                        <option value="All">All Checkers</option>
+                        <option value="Sukumar Patil">Sukumar Patil</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="reportStartDate">Start Date (Checked):</label>
+                    <input type="date" id="reportStartDate">
+                </div>
+                <div class="form-group">
+                    <label for="reportEndDate">End Date (Checked):</label>
+                    <input type="date" id="reportEndDate">
+                </div>
+
+                <div class="form-group">
+                    <label for="reportFabricType">Filter by Fabric Type:</label>
+                    <select id="reportFabricType">
+                        <option value="All">All Fabric Types</option>
+                        <option value="COTTON">COTTON</option>
+                        <option value="PCXPC">PCXPC</option>
+                        <option value="PCXPSF">PCXPSF</option>
+                        <option value="POLYSTER">POLYSTER</option>
+                        <option value="DINEAR">DINEAR</option>
+                        <option value="ROTO">ROTO</option>
+                        <option value="OTHERS">OTHERS</option>
+                    </select>
+                </div>
+                
+                <div class="export-buttons-row">
+                    <button class="btn-generate" onclick="generateCheckerReport()">Generate Report</button>
+                    <button class="btn-print" onclick="printReport()">🖨️ Print Report</button>
+                    <button class="btn-excel" onclick="exportCheckerToCSV()">📊 Export to Excel</button>
+                </div>
+            </div>
+
+            <div class="report-results-container">
+                <div id="checkerReportResults">
+                    <p style="text-align: center; color: #6c757d;">Click 'Generate Report' to view checked lots.</p>
+                </div>
+            </div>
+            
+            <div id="printContainer" style="display: none;">
+                </div>
+            
+        </div>
+        <hr style="margin: 30px 0; border-top: 1px solid #ddd;">
+        <h2>Lot Tracking & Filter</h2>
+
+        <div class="form-group">
+            <label for="searchLot">Search by Lot No. or Party Name (Global):</label>
+            <input type="text" id="searchLot" placeholder="Enter Lot No. to search (e.g., AP-2025-001)" onkeyup="filterLots()">
+        </div>
+
+        <div class="form-group">
+            <label for="statusFilter">Filter by Status (Global):</label>
+            <select id="statusFilter" onchange="filterLots()">
+                <option value="All">-- Show All Lots --</option>
+                <option value="Received">Received</option>
+                <option value="In Dyeing">In Dyeing</option>
+                <option value="QC/Finishing">QC/Finishing</option>
+                <option value="Complete/Dispatched">Complete/Dispatched</option>
+            </select>
+        </div>
+
+        <div id="lotList">
+            <ul id="lotDisplay">
+                </ul>
+        </div>
+    </div>
+
+    <script>
+        // --- JAVASCRIPT LOGIC ---
+
+        // 1. DATA MANAGEMENT AND CONFIG
+        let loggedLots = JSON.parse(localStorage.getItem('amitProcessLots')) || [];
+        const STATUSES = ["Received", "In Dyeing", "QC/Finishing", "Complete/Dispatched"];
+        let currentCheckerReportData = []; // Store filtered checked data for Tab 3 export/print
+        let currentPendingReportData = []; // Store filtered pending data for Tab 2 export/print
+
+        // Populate the report checker dropdown from the main checker list on load
+        document.addEventListener('DOMContentLoaded', () => {
+             // Use the same checker options for the report tab
+             const mainCheckerSelect = document.getElementById('checkerNameSelect');
+             const reportCheckerSelect = document.getElementById('reportCheckerSelect');
+             
+             // Clear existing options (except 'All Checkers' which is hardcoded in HTML)
+             const existingOptions = Array.from(reportCheckerSelect.options).filter(opt => opt.value !== 'All');
+             existingOptions.forEach(opt => reportCheckerSelect.removeChild(opt));
+
+             // Add options from the main checker list (skipping the initial placeholder)
+             Array.from(mainCheckerSelect.options).slice(1).forEach(option => {
+                 const newOption = document.createElement('option');
+                 newOption.value = option.value;
+                 newOption.textContent = option.textContent;
+                 reportCheckerSelect.appendChild(newOption);
+             });
+        });
+
+        function saveLots() {
+            localStorage.setItem('amitProcessLots', JSON.stringify(loggedLots));
+            // Ensure pending list is refreshed immediately upon save
+            renderPendingList(); 
+        }
+        
+        // Universal toggle function
+        function toggleSection(id) {
+            const content = document.getElementById(id);
+            if (content.style.display === "block") {
+                content.style.display = "none";
+            } else {
+                content.style.display = "block";
+            }
+        }
+        
+        // Function to determine the checker name from the dropdown
+        function getCheckerName() {
+            const selectValue = document.getElementById('checkerNameSelect').value;
+            return selectValue === "" ? null : selectValue;
+        }
+
+        // Helper function to get the current form data
+        function getFormData() {
+            return {
+                lotNo: document.getElementById('lotNumber').value.trim().toUpperCase(),
+                partyName: document.getElementById('partyName').value.trim(), 
+                greyInwardDate: document.getElementById('greyInwardDate').value, 
+                fabricType: document.getElementById('fabricType').value,
+                greyMetres: document.getElementById('greyMetres').value.trim(), 
+                jodiPairs: document.getElementById('jodiPairs').value.trim(), 
+                tagga: document.getElementById('tagga').value.trim(), 
+                greyQuality: document.getElementById('greyQuality').value.trim(), 
+                greyPanna: document.getElementById('greyPanna').value.trim(), 
+                initialOkFlag: document.getElementById('okToProcessFlag').checked 
+            };
+        }
+
+        // Helper function to clear the form
+        function clearInwardForm() {
+            document.getElementById('editingLotNo').value = '';
+            document.getElementById('lotNumber').value = '';
+            document.getElementById('partyName').value = '';
+            document.getElementById('greyInwardDate').value = ''; 
+            document.getElementById('fabricType').value = ''; 
+            document.getElementById('greyMetres').value = '';
+            document.getElementById('jodiPairs').value = '';
+            document.getElementById('tagga').value = ''; 
+            document.getElementById('greyQuality').value = '';
+            document.getElementById('greyPanna').value = '';
+            document.getElementById('okToProcessFlag').checked = false; 
+            document.getElementById('lotSubmitBtn').textContent = 'Log Lot Details'; // Reset button text
+            document.getElementById('lotNumber').disabled = false; // Enable Lot No. for new entry
+        }
+        
+        // Helper function for form validation
+        function validateForm(formData) {
+            if (formData.lotNo === "" || formData.partyName === "" || formData.greyInwardDate === "" || formData.fabricType === "" || formData.greyMetres === "" || formData.jodiPairs === "" || formData.tagga === "" || formData.greyQuality === "" || formData.greyPanna === "") { 
+                alert("Please fill out ALL required fields in the Grey Inward Details.");
+                return false;
+            }
+            if (isNaN(parseFloat(formData.greyMetres)) || parseFloat(formData.greyMetres) <= 0) {
+                 alert("Please enter a valid Metre quantity.");
+                return false;
+            }
+            return true;
+        }
+
+        // 2. MAIN SUBMISSION HANDLER (Decides to ADD or UPDATE)
+        function handleLotSubmission() {
+            const editingLotNo = document.getElementById('editingLotNo').value;
+
+            if (editingLotNo) {
+                // We are in Edit Mode
+                updateLotDetails(editingLotNo);
+            } else {
+                // We are in Add Mode
+                addLot();
+            }
+        }
+
+
+        // 2a. ADD LOT FUNCTIONALITY (For Grey Inward Tab)
+        function addLot() {
+            const formData = getFormData();
+            
+            if (!validateForm(formData)) return;
+            
+            // Check for duplicate Lot No. ONLY in Add Mode
+            if (loggedLots.some(lot => lot.lotNo === formData.lotNo)) {
+                alert(`Lot No. "${formData.lotNo}" is already logged! Use a unique Lot No.`);
+                return;
+            }
+
+            const newLot = {
+                lotNo: formData.lotNo,
+                partyName: formData.partyName, 
+                greyInwardDate: formData.greyInwardDate, 
+                fabricType: formData.fabricType,
+                greyMetres: parseFloat(formData.greyMetres).toFixed(2), 
+                jodiPairs: parseInt(formData.jodiPairs), 
+                tagga: parseInt(formData.tagga), 
+                greyQuality: formData.greyQuality,
+                greyPanna: parseFloat(formData.greyPanna).toFixed(1), 
+                initialOkFlag: formData.initialOkFlag, 
+                greyCheckedDate: null, // Always null for a new lot
+                checkerName: null, 
+                status: STATUSES[0] // Always Received for a new lot
+            };
+            
+            loggedLots.unshift(newLot); 
+            saveLots(); 
+
+            clearInwardForm();
+            document.getElementById('greyInwardContent').style.display = 'none'; 
+            filterLots();
+            
+            alert(`Lot ${newLot.lotNo} logged. Now listed in Grey Checking Status (Tab 2) for Confirmation.`);
+        }
+
+        // 2b. UPDATE LOT FUNCTIONALITY (For Grey Inward Tab)
+        function updateLotDetails(lotNoToUpdate) {
+            const formData = getFormData();
+            
+            if (!validateForm(formData)) return;
+
+            const lotIndex = loggedLots.findIndex(lot => lot.lotNo === lotNoToUpdate);
+
+            if (lotIndex === -1) {
+                alert("Error: Lot not found for update.");
+                return;
+            }
+            
+            if (confirm(`Confirm changes for Lot No. ${lotNoToUpdate}?`)) {
+                 // Update all editable fields, keeping existing status/checking info
+                loggedLots[lotIndex].partyName = formData.partyName; 
+                loggedLots[lotIndex].greyInwardDate = formData.greyInwardDate; 
+                loggedLots[lotIndex].fabricType = formData.fabricType;
+                loggedLots[lotIndex].greyMetres = parseFloat(formData.greyMetres).toFixed(2); 
+                loggedLots[lotIndex].jodiPairs = parseInt(formData.jodiPairs); 
+                loggedLots[lotIndex].tagga = parseInt(formData.tagga); 
+                loggedLots[lotIndex].greyQuality = formData.greyQuality;
+                loggedLots[lotIndex].greyPanna = parseFloat(formData.greyPanna).toFixed(1); 
+                loggedLots[lotIndex].initialOkFlag = formData.initialOkFlag;
+                
+                saveLots(); 
+
+                clearInwardForm();
+                document.getElementById('greyInwardContent').style.display = 'none';
+                filterLots();
+                alert(`Lot ${lotNoToUpdate} details successfully updated!`);
+            }
+        }
+        
+        // 3. EDIT LOT LOADER FUNCTION (Triggered by Edit button in the list)
+        function editLot(lotNo) {
+            const lot = loggedLots.find(l => l.lotNo === lotNo);
+            
+            if (!lot) {
+                alert("Error: Lot not found.");
+                return;
+            }
+            
+            // 1. Populate the form fields
+            document.getElementById('editingLotNo').value = lot.lotNo;
+            document.getElementById('lotNumber').value = lot.lotNo;
+            document.getElementById('partyName').value = lot.partyName;
+            document.getElementById('greyInwardDate').value = lot.greyInwardDate; 
+            document.getElementById('fabricType').value = lot.fabricType; 
+            document.getElementById('greyMetres').value = lot.greyMetres;
+            document.getElementById('jodiPairs').value = lot.jodiPairs;
+            document.getElementById('tagga').value = lot.tagga; 
+            document.getElementById('greyQuality').value = lot.greyQuality;
+            document.getElementById('greyPanna').value = lot.greyPanna;
+            document.getElementById('okToProcessFlag').checked = lot.initialOkFlag;
+            
+            // 2. Update the button text and disable Lot No. field
+            document.getElementById('lotSubmitBtn').textContent = `Save Changes for ${lot.lotNo}`;
+            document.getElementById('lotNumber').disabled = true;
+            
+            // 3. Open Tab 1 for editing
+            document.getElementById('greyInwardContent').style.display = 'block';
+            window.scrollTo(0, 0); // Scroll to the top to show the form
+        }
+
+        // 4. MARK LOT AS CHECKED (OK to Process) in Tab 2 
+        function markLotAsChecked(lotNo) {
+            const lotIndex = loggedLots.findIndex(lot => lot.lotNo === lotNo);
+            const checkingDate = document.getElementById('greyCheckingDate').value;
+            const finalCheckerName = getCheckerName(); 
+
+            if (!finalCheckerName) {
+                alert("Please select the Grey Checker Name in Tab 2.");
+                return;
+            }
+            if (checkingDate === "") {
+                alert("Please select the Confirmation Date in Tab 2.");
+                return;
+            }
+            
+            if (lotIndex !== -1) {
+                if (confirm(`Confirm Lot ${lotNo} CHECKED by ${finalCheckerName} on ${new Date(checkingDate).toLocaleDateString('en-GB')}?`)) {
+                    loggedLots[lotIndex].greyCheckedDate = checkingDate;
+                    loggedLots[lotIndex].checkerName = finalCheckerName;
+                    
+                    saveLots(); // This saves data and calls renderPendingList()
+                    filterLots(); // Refresh the main list
+                    
+                    alert(`Lot ${lotNo} confirmed CHECKED by ${finalCheckerName}! It can now be advanced to 'In Dyeing'.`);
+                }
+            }
+        }
+        
+        // 5. Filter logic for the Pending List 
+        function filterPendingList() {
+            const searchTerm = document.getElementById('pendingSearch').value.trim().toUpperCase();
+            const fabricFilter = document.getElementById('pendingFabricType').value;
+            
+            let pendingLots = loggedLots.filter(lot => 
+                !lot.greyCheckedDate && lot.status === STATUSES[0]
+            );
+            
+            let filteredLots = pendingLots.filter(lot => {
+                const matchesFabric = (fabricFilter === 'All' || lot.fabricType === fabricFilter);
+                const matchesSearch = lot.lotNo.toUpperCase().includes(searchTerm) || lot.partyName.toUpperCase().includes(searchTerm);
+                
+                return matchesFabric && matchesSearch;
+            });
+            
+            renderPendingList(filteredLots);
+        }
+
+        // 6. PENDING CHECK LIST FUNCTION
+        function renderPendingList(lotsToDisplay = null) {
+            const pendingListDiv = document.getElementById('pendingCheckList');
+            
+            if (lotsToDisplay === null) {
+                 // Initial load: Only show lots in "Received" status that have NOT been checked.
+                 lotsToDisplay = loggedLots.filter(lot => !lot.greyCheckedDate && lot.status === STATUSES[0]);
+            }
+            
+            pendingListDiv.innerHTML = '';
+            
+            if (lotsToDisplay.length === 0) {
+                pendingListDiv.innerHTML = '<p style="text-align: center; color: #6c757d; padding: 10px 0;">No lots currently pending check confirmation.</p>';
+                return;
+            }
+
+            lotsToDisplay.forEach(lot => {
+                const item = document.createElement('div');
+                item.className = 'pending-item-row';
+                
+                const okStatus = lot.initialOkFlag 
+                    ? `<span style="color: #28a745; font-weight: bold; margin-left: 5px;">[OK Flagged]</span>` 
+                    : `<span style="color: #ffc107; font-weight: bold; margin-left: 5px;">[Initial Review Pending]</span>`;
+
+                item.innerHTML = `
+                    <div style="flex-grow: 1;">
+                        <strong>Lot No: ${lot.lotNo} | Party: ${lot.partyName}</strong> ${okStatus} <br>
+                        <span style="font-size: 0.9em; color: #333;">
+                            **Quality:** ${lot.greyQuality} | **Panna:** ${lot.greyPanna} Inches | **Jodi:** ${lot.jodiPairs}
+                        </span> <br>
+                        <span style="font-size: 0.8em; color: #6c757d;">
+                            Type: ${lot.fabricType} | Tagga: ${lot.tagga} Rolls | Mtrs: ${lot.greyMetres}
+                        </span>
+                    </div>
+                    <button class="check-action-btn" onclick="markLotAsChecked('${lot.lotNo}')">Mark CHECKED</button>
+                `;
+                
+                pendingListDiv.appendChild(item);
+            });
+        }
+        
+        // 7. GENERATE CHECKED LOTS REPORT (TAB 3)
+        function generateCheckerReport() {
+            const checkerFilter = document.getElementById('reportCheckerSelect').value;
+            const fabricFilter = document.getElementById('reportFabricType').value;
+            const startDate = document.getElementById('reportStartDate').value;
+            const endDate = document.getElementById('reportEndDate').value;
+            const resultsDiv = document.getElementById('checkerReportResults');
+            const printDiv = document.getElementById('printContainer');
+            
+            resultsDiv.innerHTML = '';
+            printDiv.innerHTML = '';
+            
+            if (startDate && endDate && new Date(startDate) > new Date(endDate)) {
+                resultsDiv.innerHTML = '<p style="color: red; text-align: center;">Error: Start Date cannot be after End Date.</p>';
+                return;
+            }
+
+            // Filter lots that HAVE been checked
+            let filteredLots = loggedLots.filter(lot => lot.greyCheckedDate !== null);
+            
+            if (checkerFilter !== 'All') {
+                filteredLots = filteredLots.filter(lot => lot.checkerName === checkerFilter);
+            }
+            if (fabricFilter !== 'All') {
+                filteredLots = filteredLots.filter(lot => lot.fabricType === fabricFilter);
+            }
+            if (startDate) {
+                filteredLots = filteredLots.filter(lot => lot.greyCheckedDate >= startDate);
+            }
+            if (endDate) {
+                filteredLots = filteredLots.filter(lot => lot.greyCheckedDate <= endDate);
+            }
+            
+            filteredLots.sort((a, b) => new Date(b.greyCheckedDate) - new Date(a.greyCheckedDate));
+
+            currentCheckerReportData = filteredLots; 
+
+            if (filteredLots.length === 0) {
+                 resultsDiv.innerHTML = '<p style="text-align: center; color: #6c757d;">No lots found for the selected criteria.</p>';
+                 return;
+            }
+            
+            const totalMeters = filteredLots.reduce((sum, lot) => sum + parseFloat(lot.greyMetres), 0).toFixed(2);
+            const totalTagga = filteredLots.reduce((sum, lot) => sum + lot.tagga, 0);
+            
+            // --- 7a. RENDER ON-SCREEN DETAILED REPORT ---
+            const summary = document.createElement('div');
+            summary.className = 'report-summary';
+            summary.innerHTML = `
+                **Total Lots Checked: ${filteredLots.length}** | **Total Mtrs: ${totalMeters}** | **Total Rolls: ${totalTagga}**
+            `;
+            resultsDiv.appendChild(summary);
+
+            filteredLots.forEach(lot => {
+                const item = document.createElement('div');
+                item.className = 'report-item';
+                const checkDate = new Date(lot.greyCheckedDate).toLocaleDateString('en-GB');
+
+                item.innerHTML = `
+                    **Lot ${lot.lotNo}** | Party: ${lot.partyName} | Fabric: ${lot.fabricType}<br>
+                    Mtrs: ${lot.greyMetres} | Quality: ${lot.greyQuality} | Checked: ${checkDate} by ${lot.checkerName}
+                `;
+                resultsDiv.appendChild(item);
+            });
+
+            // --- 7b. GENERATE HIDDEN PRINT TABLE ---
+            const dateRange = (startDate && endDate) ? `from ${new Date(startDate).toLocaleDateString('en-GB')} to ${new Date(endDate).toLocaleDateString('en-GB')}` : 'All Dates';
+            const title = `Grey Checking Tagga Report for ${checkerFilter} (${dateRange})`;
+
+            let tableHTML = `<table id="printReportTable">`;
+            tableHTML += `<caption>${title}</caption>`;
+            tableHTML += `<thead><tr><th>Lot No.</th><th>Fabric Type</th><th>Tagga (Rolls)</th></tr></thead>`;
+            tableHTML += `<tbody>`;
+
+            filteredLots.forEach(lot => {
+                tableHTML += `<tr>`;
+                tableHTML += `<td>${lot.lotNo}</td>`;
+                tableHTML += `<td>${lot.fabricType}</td>`;
+                tableHTML += `<td style="text-align: right;">${lot.tagga}</td>`;
+                tableHTML += `</tr>`;
+            });
+
+            tableHTML += `</tbody>`;
+            tableHTML += `<tfoot><tr>`;
+            tableHTML += `<td colspan="2">TOTAL TAGGA CHECKED</td>`;
+            tableHTML += `<td style="text-align: right;">${totalTagga}</td>`;
+            tableHTML += `</tr></tfoot>`;
+            tableHTML += `</table>`;
+
+            printDiv.innerHTML = tableHTML;
+        }
+
+        // 8. GENERATE PENDING LIST REPORT (TAB 2) - NEW FUNCTION
+        function generatePendingReport() {
+            const resultsDiv = document.getElementById('pendingReportResults');
+            const printDiv = document.getElementById('pendingPrintContainer');
+            
+            resultsDiv.innerHTML = '';
+            printDiv.innerHTML = '';
+            
+            // Filter lots that HAVE NOT been checked
+            let pendingLots = loggedLots.filter(lot => !lot.greyCheckedDate && lot.status === STATUSES[0]);
+            
+            currentPendingReportData = pendingLots; 
+
+            if (pendingLots.length === 0) {
+                 resultsDiv.innerHTML = '<p style="text-align: center; color: #6c757d;">No lots currently pending check confirmation.</p>';
+                 return;
+            }
+            
+            const totalTagga = pendingLots.reduce((sum, lot) => sum + lot.tagga, 0);
+            
+            // --- 8a. RENDER ON-SCREEN DETAILED REPORT ---
+            const summary = document.createElement('div');
+            summary.className = 'report-summary';
+            summary.innerHTML = `
+                **Total Lots Pending: ${pendingLots.length}** | **Total Rolls (Tagga): ${totalTagga}**
+            `;
+            resultsDiv.appendChild(summary);
+
+            pendingLots.forEach(lot => {
+                const item = document.createElement('div');
+                item.className = 'report-item';
+                const inwardDate = new Date(lot.greyInwardDate).toLocaleDateString('en-GB');
+
+                item.innerHTML = `
+                    **Lot ${lot.lotNo}** | Party: ${lot.partyName} | Fabric: ${lot.fabricType}<br>
+                    Inward Date: ${inwardDate} | Quality: ${lot.greyQuality} | Tagga: ${lot.tagga}
+                `;
+                resultsDiv.appendChild(item);
+            });
+
+            // --- 8b. GENERATE HIDDEN PRINT TABLE (Pending List) ---
+            const title = `Grey Checking Pending List Report (as of ${new Date().toLocaleDateString('en-GB')})`;
+
+            let tableHTML = `<table id="printPendingTable">`;
+            tableHTML += `<caption>${title}</caption>`;
+            tableHTML += `<thead><tr><th>Lot No.</th><th>Party Name</th><th>Fabric Type</th><th>Tagga (Rolls)</th></tr></thead>`;
+            tableHTML += `<tbody>`;
+
+            pendingLots.forEach(lot => {
+                tableHTML += `<tr>`;
+                tableHTML += `<td>${lot.lotNo}</td>`;
+                tableHTML += `<td>${lot.partyName}</td>`;
+                tableHTML += `<td>${lot.fabricType}</td>`;
+                tableHTML += `<td style="text-align: right;">${lot.tagga}</td>`;
+                tableHTML += `</tr>`;
+            });
+
+            tableHTML += `</tbody>`;
+            tableHTML += `<tfoot><tr>`;
+            tableHTML += `<td colspan="3">TOTAL TAGGA PENDING</td>`;
+            tableHTML += `<td style="text-align: right;">${totalTagga}</td>`;
+            tableHTML += `</tr></tfoot>`;
+            tableHTML += `</table>`;
+
+            printDiv.innerHTML = tableHTML;
+        }
+
+        // 9. PRINT REPORT FUNCTION (TAB 3 - CHECKED)
+        function printReport() {
+            if (currentCheckerReportData.length === 0) {
+                alert("Please generate the **Checked Lot Report** first before attempting to print/export.");
+                return;
+            }
+            // Temporarily hide pending print container and show checked print container for print dialog
+            document.getElementById('pendingPrintContainer').style.display = 'none';
+            document.getElementById('printContainer').style.display = 'block';
+            window.print();
+            // Reset visibility after print dialog is closed
+            document.getElementById('printContainer').style.display = 'none';
+        }
+        
+        // 10. PRINT PENDING REPORT FUNCTION (TAB 2 - PENDING) - NEW FUNCTION
+        function printPendingReport() {
+            if (currentPendingReportData.length === 0) {
+                alert("Please generate the **Pending Lot Report** first before attempting to print/export.");
+                return;
+            }
+            // Temporarily hide checked print container and show pending print container for print dialog
+            document.getElementById('printContainer').style.display = 'none';
+            document.getElementById('pendingPrintContainer').style.display = 'block';
+            window.print();
+            // Reset visibility after print dialog is closed
+            document.getElementById('pendingPrintContainer').style.display = 'none';
+        }
+
+
+        // 11. EXPORT TO CSV (TAB 3 - CHECKED)
+        function exportCheckerToCSV() {
+            if (currentCheckerReportData.length === 0) {
+                alert("Please generate the **Checked Lot Report** first before attempting to export.");
+                return;
+            }
+
+            const header = [
+                "Lot No.", 
+                "Party Name", 
+                "Fabric Type", 
+                "Meters", 
+                "Jodi Pairs", 
+                "Tagga (Rolls)", 
+                "Quality", 
+                "Panna (Inches)", 
+                "Checked Date", 
+                "Checker Name"
+            ].join(',');
+            
+            const rows = currentCheckerReportData.map(lot => {
+                const checkDate = lot.greyCheckedDate ? new Date(lot.greyCheckedDate).toLocaleDateString('en-GB') : '';
+                return [
+                    `"${lot.lotNo}"`, 
+                    `"${lot.partyName}"`,
+                    lot.fabricType,
+                    lot.greyMetres,
+                    lot.jodiPairs,
+                    lot.tagga,
+                    `"${lot.greyQuality}"`,
+                    lot.greyPanna,
+                    checkDate,
+                    lot.checkerName
+                ].join(',');
+            });
+
+            const csvContent = "data:text/csv;charset=utf-8," + header + "\n" + rows.join('\n');
+            
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", "Arihant_Checked_Report_" + new Date().toISOString().slice(0, 10) + ".csv");
+            document.body.appendChild(link); 
+            link.click(); 
+            document.body.removeChild(link);
+        }
+
+        // 12. EXPORT TO CSV (TAB 2 - PENDING) - NEW FUNCTION
+        function exportPendingToCSV() {
+            if (currentPendingReportData.length === 0) {
+                alert("Please generate the **Pending Lot Report** first before attempting to export.");
+                return;
+            }
+
+            const header = [
+                "Lot No.", 
+                "Party Name", 
+                "Grey Inward Date",
+                "Fabric Type", 
+                "Meters", 
+                "Jodi Pairs", 
+                "Tagga (Rolls)", 
+                "Quality", 
+                "Initial OK Flag"
+            ].join(',');
+            
+            const rows = currentPendingReportData.map(lot => {
+                const inwardDate = lot.greyInwardDate ? new Date(lot.greyInwardDate).toLocaleDateString('en-GB') : '';
+                return [
+                    `"${lot.lotNo}"`, 
+                    `"${lot.partyName}"`,
+                    inwardDate,
+                    lot.fabricType,
+                    lot.greyMetres,
+                    lot.jodiPairs,
+                    lot.tagga,
+                    `"${lot.greyQuality}"`,
+                    lot.initialOkFlag ? "YES" : "NO"
+                ].join(',');
+            });
+
+            const csvContent = "data:text/csv;charset=utf-8," + header + "\n" + rows.join('\n');
+            
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", "Arihant_Pending_Report_" + new Date().toISOString().slice(0, 10) + ".csv");
+            document.body.appendChild(link); 
+            link.click(); 
+            document.body.removeChild(link);
+        }
+
+        // 13. STATUS ADVANCEMENT FUNCTION
+        function updateStatus(lotId) {
+            const lotIndex = loggedLots.findIndex(lot => lot.lotNo === lotId);
+            if (lotIndex === -1) return; 
+
+            // MANDATORY CHECKING REQUIREMENT
+            if (loggedLots[lotIndex].status === STATUSES[0] && !loggedLots[lotIndex].greyCheckedDate) {
+                 alert(`Cannot advance Lot ${lotId}. Please mark this lot as "CHECKED" in the Grey Checking Status tab (Tab 2) first.`);
+                 return;
+            }
+
+            let currentStatus = loggedLots[lotIndex].status;
+            let currentIndex = STATUSES.indexOf(currentStatus);
+            let nextIndex = currentIndex + 1;
+            
+            if (nextIndex >= STATUSES.length) {
+                alert(`Lot ${lotId} is already at the final status: ${currentStatus}.`);
+                return;
+            }
+
+            loggedLots[lotIndex].status = STATUSES[nextIndex];
+            saveLots(); 
+            filterLots(); 
+            
+            alert(`Status for Lot ${lotId} updated to: ${STATUSES[nextIndex]}`);
+        }
+        
+        // 14. GLOBAL FILTERING FUNCTIONALITY 
+        function filterLots() {
+            const searchTerm = document.getElementById('searchLot').value.trim().toUpperCase();
+            const statusFilter = document.getElementById('statusFilter').value;
+
+            let filteredLots = loggedLots.filter(lot => {
+                const matchesStatus = (statusFilter === 'All' || lot.status === statusFilter);
+                const matchesSearch = lot.lotNo.toUpperCase().includes(searchTerm) || lot.partyName.toUpperCase().includes(searchTerm); 
+                return matchesStatus && matchesSearch;
+            });
+
+            renderLots(filteredLots);
+        }
+
+        // 15. RENDERING FUNCTIONALITY 
+        function renderLots(lotsToDisplay) {
+            const lotDisplay = document.getElementById('lotDisplay');
+            lotDisplay.innerHTML = ''; 
+
+            if (lotsToDisplay.length === 0) {
+                lotDisplay.innerHTML = '<li style="text-align: center; color: #6c757d;">No lots found matching your criteria.</li>';
+                return;
+            }
+            
+            lotsToDisplay.forEach(lot => {
+                const listItem = document.createElement('li');
+                
+                let statusClass = lot.status.toLowerCase().replace(/[\s\/]/g, '-'); 
+                listItem.className = statusClass;
+
+                let buttonHTML = '';
+                let checkingStatusText;
+                let checkerInfo = '';
+
+                // Checking Status Logic
+                if (lot.greyCheckedDate) {
+                    checkingStatusText = `<span style="color: #28a745; font-weight: bold;">CHECKED: ${new Date(lot.greyCheckedDate).toLocaleDateString('en-GB')}</span>`;
+                    if (lot.checkerName) {
+                        checkerInfo = ` | By: ${lot.checkerName}`;
+                    }
+                } else if (lot.initialOkFlag) {
+                    checkingStatusText = `<span style="color: #ffc107; font-weight: bold;">PENDING CHECK (Initial OK)</span>`;
+                }
+                else {
+                    checkingStatusText = `<span style="color: #dc3545; font-weight: bold;">PENDING CHECK</span>`;
+                }
+
+                // Advance Status Button Logic
+                if (lot.status !== STATUSES[STATUSES.length - 1]) {
+                    buttonHTML = `<button class="status-btn" onclick="updateStatus('${lot.lotNo}')">Advance to Next Stage</button>`;
+                }
+                
+                const inwardDate = lot.greyInwardDate ? new Date(lot.greyInwardDate).toLocaleDateString('en-GB') : 'N/A';
+                
+                
+                listItem.innerHTML = `
+                    <div>
+                        <strong>Lot No: ${lot.lotNo} | Party: ${lot.partyName}</strong>
+                        <span class="status-badge status-${statusClass}">${lot.status}</span>
+                        <button class="edit-btn" onclick="editLot('${lot.lotNo}')">Edit Grey Inward</button>
+                    </div>
+                    **Inward:** ${inwardDate} | **Check Status:** ${checkingStatusText}${checkerInfo} <br>
+                    Type: ${lot.fabricType} | Mtrs: ${lot.greyMetres} | Tagga: ${lot.tagga} | Jodi Pairs: ${lot.jodiPairs} <br> 
+                    Quality: ${lot.greyQuality} | Panna: ${lot.greyPanna} Inches
+                    ${buttonHTML}
+                `;
+                lotDisplay.appendChild(listItem);
+            });
+        }
+
+        // Execute on page load
+        filterLots(); 
+        renderPendingList(); 
+        clearInwardForm(); // Ensure form starts clean and in Add Mode
+    </script>
+</body>
+</html>
